@@ -23,7 +23,7 @@ function max_applause (n: number): number { // returns maximum applause obtainab
   return Math.max(if_riff, if_chorus, if_solo);
 }
 
-console.log(max_applause(5));
+console.log("Recursive", max_applause(5));
 // at each measure we can use only one move
 // Jazzy Riff : played for 1 measure , until end of measure t . Awards j[t] applause
 // Instrumental Chorus: played for 2 measures , until end of measure t . Awards C applause
@@ -32,9 +32,28 @@ console.log(max_applause(5));
 // Iterative Solution
 
 function max_applause_dynamic(n: number) { // returns maximum applause obtainable in n measures
+  let max_applause_matrix: number[] = [];
+  max_applause_matrix[0] = 0;
+  
+  for (let i = 1; i < n + 1; i++) {
 
+    let if_riff = j[i - 1] + max_applause_matrix[i - 1];
+    let if_chorus;
+    if (i - 2 < 0) {
+      if_chorus = 0;
+    } else {
+      if_chorus = C + max_applause_matrix[i - 2];
+    } 
+    let if_solo = s[i - 1] + max_applause_matrix[i - k[i - 1]];
+
+    max_applause_matrix[i] = Math.max(if_riff, if_chorus, if_solo);
+  }
+
+  return max_applause_matrix
 }
 
+let result = max_applause_dynamic(5)
+console.log("Dynamic", result, result[5], '\n');
 // Question 2 Recursive Solution.
 // one community service project per semester
 
@@ -75,7 +94,19 @@ function max_community_credit(students: number, buses: number, projects: project
 console.log(max_community_credit(S, B, input_projects));
 
 
-function max_community_credit_dynamic() {
+function max_community_credit_dynamic(students: number, buses: number) {
+
+  let returnMatrix: number[][] = []; // i = students, j = buses
+  for (let i = 0; i < students; i++) { returnMatrix[i][0] = 0 };
+  for (let j = 0; j < buses; j++) { returnMatrix[0][j] = 0 };
+  
+  for (let i = 1; i < students; i++) {
+    for (let j = 1; j < buses; j++) {
+      let if_not_taken = returnMatrix[i][j]
+      let if_taken = input_projects returnMatrix[]
+      returnMatrix[i][j] = Math.max(if_taken, if_not_taken);
+    }
+  }
 
 }
 
@@ -87,16 +118,27 @@ let topic_times: number[] = [45, 30, 15, 60, 25];
 // Allocate topic i t[i] minutes
 // Topics cannot run into another lecture time: all t[i] <= M
 // As many lectures as we want
-
+let E: number[][] = [[0, 5, 7, 8, 9],
+                     [],
+                     [],
+                     [],
+                     []     
+                    ]
 // students recieve E[i, j] engagement when topics i -> j are covered in the same lecture
 // E[i, j] = -infinity whenever topics i -> j do not fit into a single lecture spot.
 
 // Given Topic_Time_List and Engagement_Matrix[i,j] return maximum total engagement by teaching all n topics in order, without exceeding M minutes per lecture.
 
-function maximize_lecture_engagement (topic_list: number[], lec_time: number) {
-  if (topic_list.length == 0) {
-    return 0;
+function maximize_lecture_engagement (start_topic: number, end_topic: number) {
+  if (end_topic < start_topic) { return 0; }
+  if (start_topic > topic_times.length) { return 0; }
+  if (end_topic < 0) { return 0; }
+
+  if (start_topic == end_topic) {
+    return E[start_topic][end_topic];
   }
+
+  
 
   let add_to_lecture = null;
 
